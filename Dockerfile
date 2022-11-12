@@ -6,8 +6,7 @@ LABEL app="simple-node-application"
 # Directive to set environmental variables key to value pair
 ENV NPM_CONFIG_LOGLEVEL warn
 
-# Set the working directory for any subsequent ADD, COPY, CMD, ENTRYPOINT, 
-# or RUN instructions that follow it in the Dockerfile
+# Set the working directory
 WORKDIR /usr/src/app
 
 # Copy files or folders from source to the dest path in the image's filesystem.
