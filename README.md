@@ -34,6 +34,6 @@ Reviewers: [Ron Powell][ron]
 
 **Container image repository** - A collection of named, related container images, usually providing different versions of the same application or service identified by their tags.
 
-A **docker container image registry** is a service that stores container images and is hosted either by a third-party or as a public/private registry such as Docker Hub, AWS(ECR), GCP(GCR), Quay, and so on. This simplifies your development to production workflow.
+A **docker container image registry** is a service that stores container images and is hosted either by a third-party or as a public/private registry such as Docker Hub, AWS(ECR), GCP(GCR), Quay, and so on. This simplifies your development to production workflow
 
-**Container orchestrator** - Container orchestration is all about managing the lifecycles of containers, especially in large, dynamic environments.
+**Container orchestrator** - Container orchestration is all about managing the lifecycles of containers, especially in large, dynamic environments
