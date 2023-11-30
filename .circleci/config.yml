@@ -9,7 +9,7 @@ commands:
     steps:
       - slack/notify:
           branch_pattern: main
-          channel: C04E9Q5DLFM
+          channel: C04K2NQCS8G
           event: pass
           custom: |
             {
