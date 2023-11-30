@@ -2,6 +2,40 @@ version: 2.1
 
 orbs:
   aws-ecr: circleci/aws-ecr@8.1.3
+  slack: circleci/slack@4.12.5
+
+commands:
+  notify_slack:
+    steps:
+      - slack/notify:
+          branch_pattern: main
+          channel: C04E9Q5DLFM
+          event: pass
+          custom: |
+            {
+              "blocks":
+                [
+                  {
+                    "type": "header",
+                    "text":
+                      {
+                        "type": "plain_text",
+                        "text": ":rocket: Deployment to ${CIRCLE_BRANCH}",
+                        "emoji": true
+                      }
+                  },
+                  {
+                    "type": "section",
+                    "fields":
+                      [
+                        {
+                          "type": "mrkdwn",
+                          "text": "${CIRCLE_PULL_REQUESTS} succesfully deployed."
+                        }
+                      ]
+                  }
+                ]
+            }
 
 workflows:
   build_and_push_image:
