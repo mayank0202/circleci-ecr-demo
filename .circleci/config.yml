@@ -7,25 +7,28 @@ anchors:
         only: main
 
 orbs:
-  aws-ecr: circleci/aws-ecr@6.15.2
+  aws-ecr: circleci/aws-ecr@9.0.1
 
 workflows:
   build_and_push_image:
     jobs:
-      - aws-ecr/build-and-push-image:
-          <<: *filters
-          resource_class: medium
-          name: Build and Push Docker Image
-          account-url: AWS_ECR_ACCOUNT_URL
-          aws-access-key-id: AWS_ACCESS_KEY_ID
-          aws-secret-access-key: AWS_SECRET_ACCESS_KEY
-          region: AWS_DEFAULT_REGION
-          context: dev
-          create-repo: false
-          dockerfile: Dockerfile
-          no-output-timeout: 20m
-          path: .
-          profile-name: default
-          repo: goodunited-supporter-service
-          skip-when-tags-exist: false
-          tag: 'latest,$CIRCLE_SHA1'
+      build-test-then-push-with-buildx:
+        machine:
+          image: ubuntu-2204:2022.07.1
+        steps:
+           - aws-ecr/build-and-push-image:
+             name: Build and Push Docker Image
+             account-url: AWS_ECR_ACCOUNT_URL
+             aws-access-key-id: AWS_ACCESS_KEY_ID
+             aws-secret-access-key: AWS_SECRET_ACCESS_KEY
+             region: AWS_DEFAULT_REGION
+             context: dev
+             platform: linux/amd64
+             create-repo: false
+             dockerfile: Dockerfile
+             no-output-timeout: 20m
+             path: .
+             profile-name: default
+             repo: goodunited-supporter-service
+             skip-when-tags-exist: false
+             tag: 'latest,$CIRCLE_SHA1'
