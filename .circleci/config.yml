@@ -1,30 +1,27 @@
 version: 2.1
 
-anchors:
-  filters: &filters
-    filters:
-      branches:
-        only: main
-
 orbs:
-  aws-ecr: circleci/aws-ecr@6.15.2
+  aws-ecr: circleci/aws-ecr@7.3.0
+
+jobs:
+  aws-ecr:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - setup_remote_docker:
+          version: 20.10.11
+      - aws-ecr/build-and-push-image:
+          dockerfile: Dockerfile
+          repo: goodunited-supporter-service
+          tag: latest,$CIRCLE_SHA1
 
 workflows:
-  build_and_push_image:
+  build-and-push-to-ecr:
     jobs:
-      - aws-ecr/build-and-push-image:
-          <<: *filters
-          name: Build and Push Docker Image
-          account-url: AWS_ECR_ACCOUNT_URL
-          aws-access-key-id: AWS_ACCESS_KEY_ID
-          aws-secret-access-key: AWS_SECRET_ACCESS_KEY
-          region: AWS_DEFAULT_REGION
-          context: dev
-          create-repo: true
-          dockerfile: Dockerfile
-          no-output-timeout: 20m
-          path: .
-          profile-name: default
-          repo: wordpress
-          skip-when-tags-exist: false
-          tag: 'latest,$CIRCLE_SHA1'
+      - aws-ecr:
+          context:
+            - dev
+          filters:
+            branches:
+              only:
+                - main
