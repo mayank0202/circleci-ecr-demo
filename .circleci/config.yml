@@ -1,49 +1,30 @@
 version: 2.1
 
-orbs:
-  aws-ecr: circleci/aws-ecr@8.1.3
-  slack: circleci/slack@4.12.5
+anchors:
+  filters: &filters
+    filters:
+      branches:
+        only: main
 
-commands:
-  notify_slack:
-    steps:
-      - slack/notify:
-          branch_pattern: main
-          channel: C04K2NQCS8G
-          event: pass
-          custom: |
-            {
-              "blocks":
-                [
-                  {
-                    "type": "header",
-                    "text":
-                      {
-                        "type": "plain_text",
-                        "text": ":rocket: Deployment to ${CIRCLE_BRANCH}",
-                        "emoji": true
-                      }
-                  },
-                  {
-                    "type": "section",
-                    "fields":
-                      [
-                        {
-                          "type": "mrkdwn",
-                          "text": "${CIRCLE_PULL_REQUESTS} succesfully deployed."
-                        }
-                      ]
-                  }
-                ]
-            }
+orbs:
+  aws-ecr: circleci/aws-ecr@6.15.2
 
 workflows:
   build_and_push_image:
     jobs:
       - aws-ecr/build-and-push-image:
+          <<: *filters
+          name: Build and Push Docker Image
+          account-url: AWS_ECR_ACCOUNT_URL
+          aws-access-key-id: AWS_ACCESS_KEY_ID
+          aws-secret-access-key: AWS_SECRET_ACCESS_KEY
+          region: AWS_DEFAULT_REGION
           context: dev
-          create-repo: true
+          create-repo: false
           dockerfile: Dockerfile
+          no-output-timeout: 20m
           path: .
+          profile-name: default
           repo: goodunited-supporter-service
-          tag: "$CIRCLE_SHA1"
+          skip-when-tags-exist: false
+          tag: 'latest,$CIRCLE_SHA1'
