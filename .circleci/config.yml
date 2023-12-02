@@ -14,6 +14,16 @@ jobs:
           dockerfile: Dockerfile
           repo: goodunited-supporter-service
           tag: latest,$CIRCLE_SHA1
+  mes-ecr:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - setup_remote_docker:
+          version: 20.10.11
+      - aws-ecr/build-and-push-image:
+          dockerfile: Dockerfile
+          repo: goodunited-messaging-service
+          tag: latest,$CIRCLE_SHA1        
 
 workflows:
   build-and-push-to-ecr:
@@ -25,3 +35,10 @@ workflows:
             branches:
               only:
                 - main
+      - mes-ecr:
+          context:
+            - dev
+          filters:
+            branches:
+              only:
+                - main          
