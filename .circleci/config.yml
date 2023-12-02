@@ -31,6 +31,12 @@ workflows:
       - aws-ecr:
           context:
             - dev
+          filters:
+            branches:
+              only:
+                - main
+      - aws-ecr:
+          context:
             - poc
           filters:
             branches:
