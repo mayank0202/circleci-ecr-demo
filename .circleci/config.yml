@@ -11,7 +11,7 @@ jobs:
       - setup_remote_docker:
           version: 20.10.11
       - aws-ecr/build-and-push-image:
-          path: ./services/supporter-service/Dockerfile
+          path: ./services/supporter-service/
           repo: goodunited-supporter-service
           tag: $CIRCLE_SHA1
   mes-ecr:
@@ -21,7 +21,7 @@ jobs:
       - setup_remote_docker:
           version: 20.10.11
       - aws-ecr/build-and-push-image:
-          path: ./services/supporter-service/Dockerfile
+          path: ./services/supporter-service/
           repo: goodunited-messaging-service
           tag: $CIRCLE_SHA1        
 
