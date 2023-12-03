@@ -1,0 +1,52 @@
+version: 2.1
+
+orbs:
+  aws-ecr: circleci/aws-ecr@7.3.0
+
+jobs:
+  aws-ecr:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - setup_remote_docker:
+          version: 20.10.11
+      - aws-ecr/build-and-push-image:
+          path: ./services/supporter-service/
+          repo: goodunited-supporter-service
+          tag: $CIRCLE_SHA1
+  # mes-ecr:
+  #   docker:
+  #     - image: cimg/base:stable
+  #   steps:
+  #     - setup_remote_docker:
+  #         version: 20.10.11
+  #     - aws-ecr/build-and-push-image:
+  #         path: ./services/messaging-service/
+  #         repo: goodunited-messaging-service
+  #         tag: $CIRCLE_SHA1        
+
+workflows:
+  build-and-push-to-ecr:
+    jobs:
+      - aws-ecr:
+          context:
+            - dev
+          filters:
+            branches:
+              only:
+                - main
+      - aws-ecr:
+          context:
+            - poc
+          filters:
+            branches:
+              only:
+                - main
+      # - mes-ecr:
+      #     context:
+      #       - dev
+      #       - poc
+      #     filters:
+      #       branches:
+      #         only:
+      #           - main          
