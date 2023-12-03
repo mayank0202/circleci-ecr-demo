@@ -13,17 +13,17 @@ jobs:
       - aws-ecr/build-and-push-image:
           path: ./services/supporter-service/
           repo: goodunited-supporter-service
-          tag: $CIRCLE_SHA1
-  mes-ecr:
-    docker:
-      - image: cimg/base:stable
-    steps:
-      - setup_remote_docker:
-          version: 20.10.11
-      - aws-ecr/build-and-push-image:
-          path: ./services/messaging-service/
-          repo: goodunited-messaging-service
-          tag: $CIRCLE_SHA1        
+          tag: "${CIRCLE_BUILD_NUM}-$(echo $RANDOM | cut -c -5)"
+  # mes-ecr:
+  #   docker:
+  #     - image: cimg/base:stable
+  #   steps:
+  #     - setup_remote_docker:
+  #         version: 20.10.11
+  #     - aws-ecr/build-and-push-image:
+  #         path: ./services/messaging-service/
+  #         repo: goodunited-messaging-service
+  #         tag: $CIRCLE_SHA1        
 
 workflows:
   build-and-push-to-ecr:
@@ -42,11 +42,11 @@ workflows:
             branches:
               only:
                 - main
-      - mes-ecr:
-          context:
-            - dev
-            - poc
-          filters:
-            branches:
-              only:
-                - main          
+      # - mes-ecr:
+      #     context:
+      #       - dev
+      #       - poc
+      #     filters:
+      #       branches:
+      #         only:
+      #           - main          
