@@ -13,7 +13,7 @@ jobs:
       - aws-ecr/build-and-push-image:
           path: ./services/supporter-service/
           repo: goodunited-supporter-service
-          tag: "${CIRCLE_BUILD_NUM}-$(echo $RANDOM | cut -c -5)"
+          tag: $(date +%Y%m%d%H%M%S)
   # mes-ecr:
   #   docker:
   #     - image: cimg/base:stable
