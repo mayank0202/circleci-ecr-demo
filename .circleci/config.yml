@@ -28,14 +28,14 @@ jobs:
 workflows:
   build-and-push-to-ecr:
     jobs:
-      - aws-ecr-dev:
+      - aws-ecr:
           context:
             - dev
           filters:
             branches:
               only:
                 - main
-      - aws-ecr-qa:
+      - aws-ecr:
           context:
             - poc
           filters:
