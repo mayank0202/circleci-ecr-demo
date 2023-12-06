@@ -3,6 +3,7 @@ version: 2.1
 orbs:
   aws-ecr: circleci/aws-ecr@7.3.0
   aws-ecs: circleci/aws-ecs@4.0.0
+  slack: circleci/slack@4.1
 jobs:
   aws-ecr:
     docker:
@@ -14,10 +15,13 @@ jobs:
           path: ./services/supporter-service/
           repo: goodunited-supporter-service
           tag: $CIRCLE_SHA1
-      - aws-ecs/update_service:
-          family: 'supporter-api-task'
-          cluster: 'goodunited-default-cluster'
-          container_image_name_updates: 'container=supporter-api-task,tag=${CIRCLE_SHA1}'  
+      - slack/notify:
+          event: fail
+          mentions: '@antriksha.somani'
+          template: basic_fail_1
+      - slack/notify:
+          event: pass
+          template: success_tagged_deploy_1
   # mes-ecr:
   #   docker:
   #     - image: cimg/base:stable
