@@ -19,6 +19,7 @@ jobs:
           command: |
             # Use AWS CLI to update SSM parameter with the new image tag
             aws ssm put-parameter --name "/image-tag/latest" --value "${CIRCLE_SHA1}" --type "String" --overwrite
+ 
   # mes-ecr:
   #   docker:
   #     - image: cimg/base:stable
@@ -34,7 +35,7 @@ workflows:
   build-and-push-to-ecr:
     jobs:
       - aws-ecr:
-          name: aws-ecr-${CIRCLE_BRANCH}
+          name: aws-ecr $CIRCLE_BRANCH
           context:
             - dev
           filters:
