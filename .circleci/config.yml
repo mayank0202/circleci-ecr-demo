@@ -34,6 +34,7 @@ workflows:
   build-and-push-to-ecr:
     jobs:
       - aws-ecr:
+          name: aws-ecr-${CIRCLE_BRANCH}
           context:
             - dev
           filters:
