@@ -3,6 +3,66 @@ version: 2.1
 orbs:
   aws-ecr: circleci/aws-ecr@7.3.0
   aws-ecs: circleci/aws-ecs@4.0.0
+  slack: circleci/slack@4.12.5
+
+commands:
+  notify_slack:
+    steps:
+      - slack/notify:
+          event: pass
+          custom: |
+            {
+              "blocks":
+                [
+                  {
+                    "type": "header",
+                    "text":
+                      {
+                        "type": "plain_text",
+                        "text": ":rocket: Deployment to ${CIRCLE_BRANCH}",
+                        "emoji": true
+                      }
+                  },
+                  {
+                    "type": "section",
+                    "fields":
+                      [
+                        {
+                          "type": "mrkdwn",
+                          "text": "${CIRCLE_PULL_REQUESTS} successfully deployed."
+                        }
+                      ]
+                  }
+                ]
+            }
+
+      - slack/notify:
+          event: fail
+          custom: |
+            {
+              "blocks":
+                [
+                  {
+                    "type": "header",
+                    "text":
+                      {
+                        "type": "plain_text",
+                        "text": ":fire: Deployment to ${CIRCLE_BRANCH} Failed",
+                        "emoji": true
+                      }
+                  },
+                  {
+                    "type": "section",
+                    "fields":
+                      [
+                        {
+                          "type": "mrkdwn",
+                          "text": "Failed to deploy ${CIRCLE_PULL_REQUESTS}."
+                        }
+                      ]
+                  }
+                ]
+            }  
 jobs:
   aws-ecr:
     docker:
@@ -19,7 +79,7 @@ jobs:
           command: |
             # Use AWS CLI to update SSM parameter with the new image tag
             aws ssm put-parameter --name "/image-tag/latest" --value "${CIRCLE_SHA1}" --type "String" --overwrite
- 
+      - notify_slack      
   # mes-ecr:
   #   docker:
   #     - image: cimg/base:stable
