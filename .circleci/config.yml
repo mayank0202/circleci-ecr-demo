@@ -41,7 +41,7 @@ jobs:
       - image: cimg/base:stable
     steps:
       - setup_remote_docker:
-          version: 20.10.11
+          version: docker23
       - aws-ecr/build-and-push-image:
           path: ./services/supporter-service/
           repo: goodunited-supporter-service
