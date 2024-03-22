@@ -29,11 +29,6 @@ jobs:
           command: |
             # Use AWS CLI to update SSM parameter with the new image tag
             aws ssm put-parameter --name "/image-tag/latest" --value "${CIRCLE_SHA1}" --type "String" --overwrite
-      - notify_slack   
-      - slack/notify:
-          event: fail
-          mentions: '@antriksha.somani'
-          template: basic_fail_1
   # mes-ecr:
   #   docker:
   #     - image: cimg/base:stable
@@ -56,6 +51,10 @@ workflows:
             branches:
               only:
                 - main
+      - hold:
+         type: approval
+         requires:
+           - "aws-ecr-dev"          
       # - mes-ecr:
       #     context:
       #       - dev
