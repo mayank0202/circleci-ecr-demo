@@ -32,9 +32,7 @@ jobs:
           tag: $CIRCLE_SHA1               
 workflows:
   build-and-push-to-ecr:
-    jobs:
-     - hold:
-         type: approval
+    jobs:      
       - aws-ecr:
           name: aws-ecr-dev
           context:
@@ -43,8 +41,10 @@ workflows:
             branches:
               only:
                 - main
-          requires: 
-             -  "hold"      
+      - hold:
+         type: approval
+         requires: 
+             -  "aws-ecr-dev"          
       - mes-ecr:
           context:
             - dev
@@ -52,4 +52,8 @@ workflows:
             branches:
               only:
                 - main
+      - hold:
+         type: approval
+         requires: 
+             -  "mes-ecr"          
                           
