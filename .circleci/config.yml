@@ -33,6 +33,8 @@ jobs:
 workflows:
   build-and-push-to-ecr:
     jobs:
+     - hold:
+         type: approval
       - aws-ecr:
           name: aws-ecr-dev
           context:
@@ -40,7 +42,9 @@ workflows:
           filters:
             branches:
               only:
-                - main         
+                - main
+          requires: 
+             -  "hold"      
       - mes-ecr:
           context:
             - dev
