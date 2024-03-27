@@ -45,15 +45,15 @@ workflows:
          type: approval
          requires: 
              -  "aws-ecr-dev"          
-      - mes-ecr:
-          context:
-            - dev
-          filters:
-            branches:
-              only:
-                - main
-      - hold:
-         type: approval
-         requires: 
-             -  "mes-ecr"          
+      # - mes-ecr:
+      #     context:
+      #       - dev
+      #     filters:
+      #       branches:
+      #         only:
+      #           - main
+      # - hold:
+      #    type: approval
+      #    requires: 
+      #        -  "mes-ecr"          
                           
