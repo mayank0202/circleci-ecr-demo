@@ -20,7 +20,7 @@ jobs:
           command: |
             # Use AWS CLI to update SSM parameter with the new image tag
             aws ssm put-parameter --name "/image-tag/latest" --value "${CIRCLE_SHA1}" --type "String" --overwrite
-  mes-prod-ecr-build:
+  mes-ecr:
     docker:
       - image: cimg/base:stable
     steps:
@@ -29,18 +29,7 @@ jobs:
       - aws-ecr/build-and-push-image:
           path: ./services/messaging-service/
           repo: goodunited-messaging-service
-          tag: $CIRCLE_SHA1     
-  mes-prod-ecs-deploy:
-    docker:
-      - image: cimg/base:stable
-    steps:
-      - setup_remote_docker:
-          version: 20.10.11
-      - run:
-          name: Store Image Tag in SSM Parameter
-          command: |
-            # Use AWS CLI to update SSM parameter with the new image tag
-            aws ssm put-parameter --name "/image-tag/latest" --value "${CIRCLE_SHA1}" --type "String" --overwrite           
+          tag: $CIRCLE_SHA1               
 workflows:
   build-and-push-to-ecr:
     jobs:
@@ -51,22 +40,12 @@ workflows:
           filters:
             branches:
               only:
-                - dev         
-      - mes-prod-ecr-build:
+                - main         
+      - mes-ecr:
           context:
             - dev
           filters:
             branches:
               only:
-                - main  
-      - hold:
-         type: approval
-         requires:
-           - "mes-prod-ecr-build" 
-      - mes-prod-ecs-deploy:
-          context:
-            - dev
-          filters:
-            branches:
-              only:
-                - main                       
+                - main
+                          
