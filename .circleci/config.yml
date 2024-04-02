@@ -5,7 +5,7 @@ orbs:
   aws-ecs: circleci/aws-ecs@4.0.0
              
 jobs:
- stage-deployment-approval:
+  stage-deployment-approval:
     docker:
       - image: cimg/python:3.10
     steps:
