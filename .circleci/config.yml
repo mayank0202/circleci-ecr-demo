@@ -5,6 +5,16 @@ orbs:
   aws-ecs: circleci/aws-ecs@4.0.0
              
 jobs:
+ stage-deployment-approval:
+    docker:
+      - image: cimg/python:3.10
+    steps:
+      - run:
+          name: Wait for Approval
+          command: |
+            # Add Slack notification logic to inform users about the pending approval
+            curl -X POST -H 'Content-type: application/json' --data '{"text":"A deployment to stage is pending approval. Please approve the deployment."}' $SLACK_WEBHOOK_URL
+            # Replace $SLACK_WEBHOOK_URL with your actual Slack webhook URL
   aws-ecr:
     docker:
       - image: cimg/base:stable
@@ -32,28 +42,31 @@ jobs:
           tag: $CIRCLE_SHA1               
 workflows:
   build-and-push-to-ecr:
-    jobs:      
+    jobs:
+      - stage-deployment-approval:
+          name: stage-deployment-approval
+          context:
+            - dev  # Add your Slack context here
+          filters:
+            branches:
+              only:
+                - main
       - aws-ecr:
           name: aws-ecr-dev
+          requires:
+            - stage-deployment-approval
+          context:
+            - dev
+          filters:
+            branches:
+              only:
+                - main         
+      - mes-ecr:
           context:
             - dev
           filters:
             branches:
               only:
                 - main
-      - hold:
-         type: approval
-         requires: 
-             -  "aws-ecr-dev"          
-      # - mes-ecr:
-      #     context:
-      #       - dev
-      #     filters:
-      #       branches:
-      #         only:
-      #           - main
-      # - hold:
-      #    type: approval
-      #    requires: 
-      #        -  "mes-ecr"          
+             
                           
