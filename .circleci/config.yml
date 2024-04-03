@@ -51,10 +51,14 @@ workflows:
             branches:
               only:
                 - main
+      - hold:
+         type: approval
+         requires:
+           - "stage-deployment-approval"          
       - aws-ecr:
           name: aws-ecr-dev
           requires:
-            - stage-deployment-approval
+            - hold
           context:
             - dev
           filters:
