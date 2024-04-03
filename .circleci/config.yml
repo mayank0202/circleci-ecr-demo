@@ -12,8 +12,17 @@ jobs:
       - run:
           name: Wait for Approval
           command: |
+            # Get the Slack username of the user who triggered the pipeline
+            SLACK_USERNAME=$(curl -sSfL https://circleci.com/api/v2/me \
+                            -H "Circle-Token: $CIRCLE_TOKEN" \
+                            | jq -r '.username')
+
             # Add Slack notification logic to inform users about the pending approval
-            curl -X POST -H 'Content-type: application/json' --data "{\"text\":\"A deployment to stage is pending approval. Please approve the deployment, @mayank.sharma.\"}" $SLACK_WEBHOOK_URL
+            curl -X POST -H 'Content-type: application/json' --data "{\"text\":\"A deployment to stage is pending approval. Please approve the deployment, @$SLACK_USERNAME.\"}" $SLACK_WEBHOOK_URL
+            # Replace $SLACK_WEBHOOK_URL with your actual Slack webhook URL
+
+            # Add Slack notification logic to inform users about the pending approval
+            # curl -X POST -H 'Content-type: application/json' --data "{\"text\":\"A deployment to stage is pending approval. Please approve the deployment, @mayank.sharma.\"}" $SLACK_WEBHOOK_URL
             # Replace $SLACK_WEBHOOK_URL with your actual Slack webhook URL
   aws-ecr:
     docker:
