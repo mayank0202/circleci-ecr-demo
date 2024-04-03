@@ -66,6 +66,8 @@ workflows:
               only:
                 - main         
       - mes-ecr:
+          requires:
+            - hold
           context:
             - dev
           filters:
