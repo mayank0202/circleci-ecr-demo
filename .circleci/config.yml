@@ -14,10 +14,7 @@ jobs:
           command: |
             # Add Slack notification logic to inform users about the pending approval
             curl -X POST -H 'Content-type: application/json' --data "{\"text\":\"A deployment to stage is pending approval. Please approve the deployment, @mayank.sharma.\"}" $SLACK_WEBHOOK_URL
-            # Replace $SLACK_WEBHOOK_URL with your actual Slack webhook URL
-      - slack/notify:
-          event: always
-          mentions: '@here'      
+            # Replace $SLACK_WEBHOOK_URL with your actual Slack webhook URL    
   aws-ecr:
     docker:
       - image: cimg/base:stable
@@ -33,6 +30,10 @@ jobs:
           command: |
             # Use AWS CLI to update SSM parameter with the new image tag
             aws ssm put-parameter --name "/image-tag/latest" --value "${CIRCLE_SHA1}" --type "String" --overwrite
+      - slack/notify:
+          event: pass
+          mentions: '@mayank.sharma'
+          template: basic_success_1       
   mes-ecr:
     docker:
       - image: cimg/base:stable
@@ -42,7 +43,11 @@ jobs:
       - aws-ecr/build-and-push-image:
           path: ./services/messaging-service/
           repo: goodunited-messaging-service
-          tag: $CIRCLE_SHA1               
+          tag: $CIRCLE_SHA1
+      - slack/notify:
+          event: pass
+          mentions: '@mayank.sharma'
+          template: basic_success_1                   
 workflows:
   build-and-push-to-ecr:
     jobs:
