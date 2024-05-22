@@ -1,8 +1,9 @@
 version: 2.1
 
 orbs:
-  aws-ecr: circleci/aws-ecr@7.3.0
+  aws-ecr: circleci/aws-ecr@9.1.0
   aws-ecs: circleci/aws-ecs@4.0.0
+  aws-cli: circleci/aws-cli@4.0
   slack: circleci/slack@4.12.6           
 jobs:
   stage-deployment-approval:
@@ -21,7 +22,11 @@ jobs:
     steps:
       - setup_remote_docker:
           version: docker23
-      - aws-ecr/build-and-push-image:
+      - aws-ecr/build_and_push_image:
+          account_id: ${AWS_ACCOUNT_ID}
+          auth: 
+           - aws-cli/setup:
+              role_arn: dev
           path: ./services/supporter-service/
           repo: goodunited-supporter-service
           tag: $CIRCLE_SHA1
@@ -34,20 +39,20 @@ jobs:
           event: pass
           mentions: '@mayank.sharma'
           template: basic_success_1       
-  mes-ecr:
-    docker:
-      - image: cimg/base:stable
-    steps:
-      - setup_remote_docker:
-          version: 20.10.11
-      - aws-ecr/build-and-push-image:
-          path: ./services/messaging-service/
-          repo: goodunited-messaging-service
-          tag: $CIRCLE_SHA1
-      - slack/notify:
-          event: pass
-          mentions: '@mayank.sharma'
-          template: basic_success_1                   
+  # mes-ecr:
+  #   docker:
+  #     - image: cimg/base:stable
+  #   steps:
+  #     - setup_remote_docker:
+  #         version: 20.10.11
+  #     - aws-ecr/build-and-push-image:
+  #         path: ./services/messaging-service/
+  #         repo: goodunited-messaging-service
+  #         tag: $CIRCLE_SHA1
+  #     - slack/notify:
+  #         event: pass
+  #         mentions: '@mayank.sharma'
+  #         template: basic_success_1                   
 workflows:
   build-and-push-to-ecr:
     jobs:
@@ -73,14 +78,14 @@ workflows:
             branches:
               only:
                 - main         
-      - mes-ecr:
-          requires:
-            - hold
-          context:
-            - dev
-          filters:
-            branches:
-              only:
-                - main
+      # - mes-ecr:
+      #     requires:
+      #       - hold
+      #     context:
+      #       - dev
+      #     filters:
+      #       branches:
+      #         only:
+      #           - main
              
                           
